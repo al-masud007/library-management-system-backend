@@ -45,9 +45,9 @@ public class BookActionController {
                 });
 
         // Check if already borrowed
-        if (record.getQuantityBorrowed() >= 1) {
-            return new BaseResponse(false, "You have already borrowed this book", 400);
-        }
+//        if (record.getQuantityBorrowed() >= 1) {
+//            return new BaseResponse(false, "You have already borrowed this book", 400);
+//        }
 
         // reduce stock
         book.setQuantity(book.getQuantity() - 1);
