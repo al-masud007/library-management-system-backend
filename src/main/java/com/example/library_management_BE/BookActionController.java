@@ -16,10 +16,8 @@ public class BookActionController {
     @Autowired
     private BorrowRecordRepository borrowRecordRepository;
 
-    // For now, we assume userId = 1 (since login not yet built)
     private final Long FIXED_USER_ID = 1L;
 
-    // Borrow
     @PostMapping("/{id}/borrow")
     public BaseResponse borrowBook(@PathVariable Long id) {
         Optional<Book> optionalBook = bookRepository.findById(id);
@@ -33,7 +31,6 @@ public class BookActionController {
             return new BaseResponse(false, "No copies available to borrow", 400);
         }
 
-        // track borrow record
         BorrowRecord record = borrowRecordRepository
                 .findByUserIdAndBookId(FIXED_USER_ID, id)
                 .orElseGet(() -> {
@@ -44,12 +41,7 @@ public class BookActionController {
                     return newRecord;
                 });
 
-        // Check if already borrowed
-//        if (record.getQuantityBorrowed() >= 1) {
-//            return new BaseResponse(false, "You have already borrowed this book", 400);
-//        }
 
-        // reduce stock
         book.setQuantity(book.getQuantity() - 1);
         bookRepository.save(book);
 
@@ -59,7 +51,6 @@ public class BookActionController {
         return new BaseResponse(true, "Book borrowed successfully", 200);
     }
 
-    // Return
     @PostMapping("/{id}/return")
     public BaseResponse returnBook(@PathVariable Long id) {
         Optional<Book> optionalBook = bookRepository.findById(id);
@@ -74,12 +65,10 @@ public class BookActionController {
             return new BaseResponse(false, "You haven’t borrowed this book", 400);
         }
 
-        // increase stock
         Book book = optionalBook.get();
         book.setQuantity(book.getQuantity() + 1);
         bookRepository.save(book);
 
-        // decrease borrow record
         record.setQuantityBorrowed(record.getQuantityBorrowed() - 1);
         borrowRecordRepository.save(record);
 

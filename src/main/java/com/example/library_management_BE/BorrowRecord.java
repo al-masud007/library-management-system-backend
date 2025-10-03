@@ -11,7 +11,7 @@ public class BorrowRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;  // in future link with User table
+    private Long userId;
     private Long bookId;
     private int quantityBorrowed;
 

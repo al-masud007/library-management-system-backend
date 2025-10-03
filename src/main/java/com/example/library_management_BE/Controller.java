@@ -15,19 +15,17 @@ public class Controller {
     @PostMapping("/add")
     public BaseResponse addBook(@RequestBody Book book) {
 
-        if (book == null || book.getBookName().isEmpty() || book.getBookAuthor().isEmpty() || book.getQuantity() <= 0 || BookRepository.findByBookName(book.getBookName()).isPresent() ) {
-
-            System.out.println("Book details: " + book);
-            return new BaseResponse(false, "invalid Book data", 400);
-
-
-        } else {
-            Book savebook = BookRepository.save(book);
-            System.out.println("Book details: " + book);
-            return new BaseResponse(true, "Book added successfully", 200);
+        if (book == null) {
+            return new BaseResponse(false, "Book data cannot be null", 400);
         }
-        
 
+        if (BookRepository.findByBookName(book.getBookName().trim()).isPresent()) {
+            return new BaseResponse(false, "Book with name '" + book.getBookName() + "' already exists in the database", 409);
+        }
+
+        Book savedBook = BookRepository.save(book);
+        System.out.println("Book added successfully: " + savedBook);
+        return new BaseResponse(true, "Book '" + book.getBookName() + "' added successfully", 201);
     }
     @GetMapping
     public List<Book> getAllBooks() {
@@ -35,9 +33,3 @@ public class Controller {
     }
     
 }
-
-
-
-
-
-
